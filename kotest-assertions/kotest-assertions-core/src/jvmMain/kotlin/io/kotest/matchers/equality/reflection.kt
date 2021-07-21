@@ -383,7 +383,12 @@ private fun <T> checkEqualityOfFields(fields: List<KProperty<*>>, value: T, othe
    return fields.mapNotNull {
       val actual = it.getter.call(value)
       val expected = it.getter.call(other)
-      if (actual == expected) null else {
+      val equal = when (actual) {
+         is Array<*> -> actual.contentDeepEquals(expected as Array<*>)
+         else -> actual == expected
+      }
+
+      if (equal) null else {
          "${it.name}: ${actual.show().value} != ${expected.show().value}"
       }
    }

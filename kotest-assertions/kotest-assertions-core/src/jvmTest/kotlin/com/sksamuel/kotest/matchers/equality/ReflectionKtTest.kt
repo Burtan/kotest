@@ -13,6 +13,9 @@ class ReflectionKtTest : FunSpec() {
 
    data class Foo(val a: String, val b: Int, val c: Boolean)
 
+   @Suppress("ArrayInDataClass")
+   data class SpecialFields(val a: Array<Int>)
+
    data class Car(val name: String, val price: Int, private val modelNumber: Int)
 
    class Person(val name: String) {
@@ -24,6 +27,11 @@ class ReflectionKtTest : FunSpec() {
    }
 
    init {
+
+      test("Compare special fields like Arrays") {
+         SpecialFields(arrayOf(1, 2, 3)).shouldBeEqualToUsingFields(SpecialFields(arrayOf(1, 2, 3)))
+         SpecialFields(arrayOf(1, 2, 3)).shouldNotBeEqualToUsingFields(SpecialFields(arrayOf(1, 2, 3, 4)))
+      }
 
       test("shouldBeEqualToUsingFields") {
          Foo("sammy", 1, true).shouldBeEqualToUsingFields(Foo("sammy", 1, false), Foo::a, Foo::b)
